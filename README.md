@@ -1,8 +1,18 @@
-# React + Vite
+# About Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- Project name:- UniHub
+- Type:- An university activity management web application
+- [Project live URL](https://unihub-e8b67.web.app/)
 
-Currently, two official plugins are available:
+# Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- A student can see all the activities of his section.
+- A class representative (CR) can add activities on behalf of the students.
+- A student can create his own team or join existing team for an activity.
+- Team leader can Add/Remove members from his team.
+- Team leader can upload team resources.
+
+# Technologies used
+
+- Client side (React, state management, react router, tailwind css etc.)
+- Server side (Node JS, Express JS, MongoDB)
