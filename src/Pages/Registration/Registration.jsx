@@ -2,15 +2,19 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ImSpinner9 } from "react-icons/im";
 import signUpImage from "/sign-up.svg";
-import { Button, Input, Option, Select } from "@material-tailwind/react";
+import { Button, Input } from "@material-tailwind/react";
 import Swal from "sweetalert2";
 import useAuth from "../../Hooks/useAuth";
 import toast from "react-hot-toast";
+import useAxios from "../../Hooks/useAxios";
 
 const Registration = () => {
   const [loading, setLoading] = useState(false);
   let { createUser, update, logOut } = useAuth();
   let navigate = useNavigate();
+  let axios = useAxios();
+
+  const [selectedSection, setSelectedSection] = useState("");
 
   const handleRegister = async (e) => {
     setLoading(true);
@@ -18,14 +22,32 @@ const Registration = () => {
 
     let form = e.target;
     let name = form.name.value;
+    let studentId = form.id.value;
     let email = form.email.value;
     let password = form.password.value;
+
+    let studentInfo = {
+      name,
+      studentId,
+      selectedSection,
+      email,
+      role: "student",
+    };
 
     const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     const passRegex = /^(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}|:;<>,.?/~`])(.{6,})$/;
     const validPassword = passRegex.test(password);
     const validGmail = gmailRegex.test(email);
 
+    if (!selectedSection) {
+      Swal.fire({
+        icon: "warning",
+        title: "Oops...",
+        text: "Please select your section",
+      });
+      setLoading(false);
+      return;
+    }
     if (!validGmail) {
       Swal.fire({
         icon: "warning",
@@ -45,33 +67,51 @@ const Registration = () => {
       return;
     }
 
-    createUser(email, password).then(() => {
-      update(name, "https://i.ibb.co/HN9NtYY/user.png")
-        .then(() => {
-          logOut()
+    axios
+      .post("/create/student", studentInfo)
+      .then((res) => {
+        if (res.data.alreadyExists) {
+          setLoading(false);
+          toast.error("User Already Exists!!");
+          return;
+        }
+
+        createUser(email, password).then(() => {
+          update(name, "https://i.ibb.co/HN9NtYY/user.png")
             .then(() => {
-              setLoading(false);
-              navigate("/sign-in");
-              toast.success(`Account created successfully!!`, {
-                style: {
-                  border: "2px solid green",
-                  padding: "8px",
-                  color: "#713200",
-                },
-                iconTheme: {
-                  primary: "green",
-                  secondary: "#FFFAEE",
-                },
-              });
+              logOut()
+                .then(() => {
+                  setLoading(false);
+                  navigate("/sign-in");
+                  toast.success(`Account created successfully!!`, {
+                    style: {
+                      border: "2px solid green",
+                      padding: "8px",
+                      color: "#713200",
+                    },
+                    iconTheme: {
+                      primary: "green",
+                      secondary: "#FFFAEE",
+                    },
+                  });
+                })
+                .catch((error) => {
+                  console.log(error);
+                  setLoading(false);
+                  toast.error("Something went wrong!!");
+                });
             })
             .catch((error) => {
               console.log(error);
+              setLoading(false);
+              toast.error("Something went wrong!!");
             });
-        })
-        .catch((error) => {
-          console.log(error);
         });
-    });
+      })
+      .catch(() => {
+        setLoading(false);
+        toast.error("Something went wrong!!");
+      });
   };
 
   return (
@@ -106,6 +146,7 @@ const Registration = () => {
                   <div className="w-full mt-4">
                     <Input
                       color="blue"
+                      placeholder="For example 201-15-3689"
                       label="Enter your Student ID"
                       name="id"
                       required
@@ -113,11 +154,18 @@ const Registration = () => {
                   </div>
 
                   <div className="w-full mt-4">
-                    <Select label="Select your section">
-                      <Option>56_A</Option>
-                      <Option>56_B</Option>
-                      <Option>56_C</Option>
-                    </Select>
+                    <select
+                      className="w-full p-2 rounded-lg outline-none border border-blue-gray-200"
+                      value={selectedSection}
+                      onChange={(e) => setSelectedSection(e.target.value)}
+                    >
+                      <option value="" disabled>
+                        Select Section
+                      </option>
+                      <option value="56_A">56_A</option>
+                      <option value="56_B">56_B</option>
+                      <option value="56_C">56_C</option>
+                    </select>
                   </div>
 
                   <div className="w-full mt-4">
