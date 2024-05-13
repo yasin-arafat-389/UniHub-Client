@@ -1,5 +1,4 @@
 import { Button, Input } from "@material-tailwind/react";
-import { FcGoogle } from "react-icons/fc";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
@@ -10,7 +9,7 @@ import useAuth from "../../Hooks/useAuth";
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
-  let { login, googleLogin, user } = useAuth();
+  let { login, user } = useAuth();
   let location = useLocation();
   let navigate = useNavigate();
 
@@ -64,37 +63,6 @@ const Login = () => {
       });
   };
 
-  let handleGoogleLogin = () => {
-    googleLogin()
-      .then(() => {
-        navigate(location?.state ? location.state : "/", { replace: true });
-        toast.success(`Successfully Logged In!`, {
-          style: {
-            border: "2px solid green",
-            padding: "8px",
-            color: "#713200",
-          },
-          iconTheme: {
-            primary: "green",
-            secondary: "#FFFAEE",
-          },
-        });
-      })
-      .catch(() => {
-        toast.error(`Invalid email or password!!`, {
-          style: {
-            border: "2px solid red",
-            padding: "8px",
-            color: "#713200",
-          },
-          iconTheme: {
-            primary: "red",
-            secondary: "#FFFAEE",
-          },
-        });
-      });
-  };
-
   useEffect(() => {
     if (user) {
       navigate("/");
@@ -123,30 +91,8 @@ const Login = () => {
                     Sign In to your account
                   </p>
 
-                  <Button
-                    onClick={handleGoogleLogin}
-                    size="lg"
-                    fullWidth
-                    variant="outlined"
-                    color="blue-gray"
-                    className="flex items-center justify-center gap-3 mx-auto mt-4"
-                  >
-                    <FcGoogle fontSize={"25px"} />
-                    Sign In with Google
-                  </Button>
-
-                  <div className="flex items-center justify-between mt-4">
-                    <span className="w-1/5 h-[2px] bg-gray-400 lg:w-1/4"></span>
-
-                    <div className="text-xs text-center text-gray-700 uppercase dark:text-gray-400">
-                      or Sign In with email
-                    </div>
-
-                    <span className="w-1/5 h-[2px] bg-gray-400 lg:w-1/4"></span>
-                  </div>
-
                   <form onSubmit={handleLogin}>
-                    <div className="mt-4">
+                    <div className="mt-10">
                       <Input
                         value={formData.email}
                         onChange={handleInputChange}
